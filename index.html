@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .status-idle {
+            color: green;
+        }
+        .status-listening {
+            color: red;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Voice Assistant</h1>
+        <button id="startButton" onclick="startListening()">Turn on the voice assistant</button>
+        <div id="result"></div>
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        // Function to trigger the backend for starting the listening process
+        function startListening() {
+            document.getElementById('result').innerText = "Activating Assistant... Please wait.";
+
+            // Make an AJAX call to start the listening process
+            fetch('/start-listening')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        document.getElementById('result').innerText = "Assistant is active. Say 'HI' to wake me up!";
+                    } else {
+                        document.getElementById('result').innerText = "Error: " + data.message;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('result').innerText = "Error: " + error.message;
+                });
+        }
+
+        // Function to check the current status of the assistant (whether it's listening or idle)
+        function checkStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    let statusElement = document.getElementById('status');
+                    if (data.status === "listening") {
+                        statusElement.innerText = data.message;
+                        statusElement.classList.add('status-listening');
+                        statusElement.classList.remove('status-idle');
+                    } else {
+                        statusElement.innerText = data.message;
+                        statusElement.classList.add('status-idle');
+                        statusElement.classList.remove('status-listening');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('status').innerText = "Error checking status: " + error.message;
+                });
+        }
+
+        // Check status automatically every 2 seconds
+        setInterval(checkStatus, 2000);
+    </script>
+</body>
+</html>
