@@ -6,29 +6,94 @@
     <title>Voice Assistant</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #FF7E5F, #FEB47B);
+            color: #fff;
         }
-        .status {
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #startButton {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: none;
+            background: #FF6F61;
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        #startButton:hover {
+            background: #FF3B30;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            transform: scale(1.1);
+        }
+
+        #startButton.active {
+            box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.8);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.8);
+            }
+            50% {
+                box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.6);
+            }
+            100% {
+                box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.8);
+            }
+        }
+
+        #result {
             margin-top: 20px;
             font-size: 1.2em;
         }
+
+        .status {
+            margin-top: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
         .status-idle {
-            color: green;
+            color: #00FF7F;
         }
+
         .status-listening {
-            color: red;
+            color: #FF3B30;
         }
+
         .error {
-            color: red;
+            color: #FFD700;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Voice Assistant</h1>
-        <button id="startButton" onclick="startListening()">Turn on the voice assistant</button>
+        <button id="startButton" onclick="startListening()">Activate</button>
         <div id="result"></div>
         <div class="status" id="status"></div>
     </div>
@@ -36,6 +101,8 @@
     <script>
         // Function to trigger the backend for starting the listening process
         function startListening() {
+            const startButton = document.getElementById('startButton');
+            startButton.classList.add('active');
             document.getElementById('result').innerText = "Activating Assistant... Please wait.";
 
             // Make an AJAX call to start the listening process
@@ -46,10 +113,12 @@
                         document.getElementById('result').innerText = "Assistant is active. Say 'HI' to wake me up!";
                     } else {
                         document.getElementById('result').innerText = "Error: " + data.message;
+                        startButton.classList.remove('active');
                     }
                 })
                 .catch(error => {
                     document.getElementById('result').innerText = "Error: " + error.message;
+                    startButton.classList.remove('active');
                 });
         }
 
